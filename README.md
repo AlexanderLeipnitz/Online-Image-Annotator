@@ -16,7 +16,7 @@
   - Linux: LAMP
   - Windows: XAMPP
 - Clone the repository into the document root directory of the webserver 
-  `git clone https://github.com/AlexanderLeipnitz/BoundingBox-web-Annotator`
+  `git clone https://github.com/AlexanderLeipnitz/Online-Image-Annotator`
 - Run `maintenance_scripts/dataset_stats.py` periodically if you want display up-to-date dataset statistics
 ## Usage
 - `Show Annotation Type` switches between the finished and unfinished folder and displays only the images from them
