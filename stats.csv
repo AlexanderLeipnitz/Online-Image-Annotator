@@ -1,0 +1,15 @@
+num_of_finished_annotations,1
+num_of_unfinished_annotations,1
+num_of_empty_annotations,1
+person_num_of_boxes,0
+person_min_size_abs,99999
+person_max_size_abs,0
+person_summed_size_abs,0.0
+technic_num_of_boxes,1
+technic_min_size_abs,99999
+technic_max_size_abs,205024
+technic_summed_size_abs,205024.0
+animal_num_of_boxes,0
+animal_min_size_abs,99999
+animal_max_size_abs,0
+animal_summed_size_abs,0

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Online-Image-Annotator</title>
+  <link rel="shortcut icon" href="img/favicon2.ico.png" type="image/png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="helper_functions.js"></script>
+  <script src="overlay.js"></script>
+  <script src="mouse_functions.js"></script>
+  <script src="communication.js"></script>
+  <script src="drawing.js"></script>
+  <script src="preview.js"></script>
+  <script src="detection/box_draw.js"></script>
+  <script src="detection/box_move.js"></script>
+  <script src="detection/box_resize.js"></script>
+  <script src="segmentation/polygon_draw.js"></script>
+  <script src="segmentation/polygon_resize.js"></script>
+  <script src="index.js"></script>
+</head>
+
+<body id="page" onload=init()>
+  <div id="overlay" onclick="overlay_off()"></div>
+  <div class="wrapper">
+    <div class="image">
+      <canvas id="img_canvas" width="960" height="540"></canvas>
+      <canvas id="box_canvas" width="960" height="540"></canvas>
+      <canvas id="tmp_canvas" width="960" height="540"></canvas>
+    </div>
+    <div class="navigation_menu">
+      <table>
+        <tr>
+          <td style="height: 35px;">
+            <span id="prev_dir" title="Back">&lt;</span>
+            <span id="dir_number"></span>
+            <span id="next_dir" title="Next">&gt;</span>
+          </td>
+          <td rowspan="4">
+            <div style="position: relative; top: -75px; left: 10px">
+              <div class="preview">
+                <canvas id="preview_img" width="240" height="135"></canvas>
+                <canvas id="preview_viewport" width="240" height="135"></canvas>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="height: 35px;">
+            <span id="prev_vid" title="Back">&lt;</span>
+            <span id="vid_number"></span>
+            <span id="next_vid" title="Next">&gt;</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="height: 35px;">
+            <span id="prev_img_10" title="Back_10">&lt;&lt;</span>
+            <span id="prev_img" title="Back">&lt;</span>
+            <span id="img_number"></span>
+            <span id="next_img" title="Next">&gt;</span>
+            <span id="next_img_10" title="Next_10">&gt;&gt;</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="height: 35px;">
+            <span id="zoom_out" title="Zoom Out">&#45;</span>
+            <span id="zoom_status"></span>
+            <span id="zoom_in" title="Zoom In">&#43;</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div class="menu">
+      <table>
+        <tr>
+          <td>Finished Annotation?</td>
+          <td>
+            <label class="switch">
+                <input type="checkbox" id="progress" unchecked>
+                <div class="slider round">
+                  <span class="on">Yes</span><span class="off">No</span>
+                </div>
+              </label>
+          </td>
+        </tr>
+        <tr>
+          <td>Show Annotation Type:</td>
+          <td>
+            <label class="switch">
+                <input type="checkbox" id="state" checked>
+                <div class="slider round">
+                  <span class="on">Finished</span><span class="off">Unfinished</span>
+                </div>
+              </label>
+          </td>
+        </tr>
+      </table>
+      <br>
+      <div class="tab">
+        <button class="tablinks" onclick="switch_annotation_type(event, 'detection')" id="defaultType">Detection</button>
+        <button class="tablinks" onclick="switch_annotation_type(event, 'segmentation')">Segmentation</button>
+      </div>
+      <div id="detection" class="tabcontent">
+        <table>
+          <tr>
+            <td>Select Tool mode:</td>
+            <td>
+              <select id="select_det_mode">
+                <option value="pencil" selected>Pencil</option>
+                <option value="eraser">Eraser</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>Image empty?</td>
+            <td>
+              <label class="switch">
+                <input type="checkbox" id="empty_image" unchecked>
+                <div class="slider round">
+                  <span class="on">True</span><span class="off">False</span>
+                </div>
+              </label>
+            </td>
+          </tr>
+        </table>
+        <table>
+          <tr>
+            <td>Select Class:</td>
+          </tr>
+          <tr>
+            <td>
+              <table>
+                <tr id="person">
+                  <td id="person1" style="min-width:50px;background-color:rgb(255,0,255)"></td>
+                  <td id="person2">Person</td>
+                </tr>
+                <tr id="technic">
+                  <td id="technic1" style="background-color:rgb(50, 45, 230)"></td>
+                  <td id="technic2">Technic</td>
+                </tr>
+                <tr id="animal">
+                  <td id="animal1" style="background-color:rgb(65, 130, 45)"></td>
+                  <td id="animal2">Animal</td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="person_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="technic_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="animal_num"></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div id="segmentation" class="tabcontent">
+        <table>
+          <tr>
+            <td>Segmentation Images Only:</td>
+            <td>
+              <label class="switch">
+                  <input type="checkbox" id="seg_images" unchecked>
+                  <div class="slider round">
+                    <span class="on">True</span><span class="off">False</span>
+                  </div>
+                </label>
+            </td>
+          </tr>
+          <tr>
+            <td>Save Polygon to png:</td>
+            <td>
+              <label class="switch">
+                  <input type="checkbox" id="export_png" unchecked>
+                  <div class="slider round">
+                    <span class="on">True</span><span class="off">False</span>
+                  </div>
+                </label>
+            </td>
+          </tr>
+          <tr>
+            <td>Select Tool mode:</td>
+            <td>
+              <select id="select_seg_mode">
+                  <option value="pencil" selected>Pencil</option>
+                  <option value="eraser">Eraser</option>
+                </select>
+            </td>
+          </tr>
+        </table>
+        <!-- new definition for Agri-13 -->
+        <table>
+          <tr>
+            <td>Select Class:</td>
+          </tr>
+          <tr>
+            <td>
+              <table>
+                <tr id="void">
+                  <td id="void1" style="min-width:50px;background-color:rgb(0, 0, 0)"></td>
+                  <td id="void2">void</td>
+                </tr>
+                <tr id="branches">
+                  <td id="branches1" style="min-width:50px;background-color:rgb(254, 234, 187)"></td>
+                  <td id="branches2">branches</td>
+                </tr>
+                <tr id="harvested">
+                  <td id="harvested1" style="background-color:rgb(231, 208, 183)"></td>
+                  <td id="harvested2">harvested</td>
+                </tr>
+                <tr id="blankField">
+                  <td id="blankField1" style="background-color:rgb(207, 171, 122)"></td>
+                  <td id="blankField2">blankField</td>
+                </tr>
+                <tr id="grainField">
+                  <td id="grainField1" style="background-color:rgb(255, 204, 0)"></td>
+                  <td id="grainField2">grainField</td>
+                </tr>
+                <tr id="colzaBloom">
+                  <td id="colzaBloom1" style="background-color:rgb(253, 240, 30)"></td>
+                  <td id="colzaBloom2">colzaBloom</td>
+                </tr>
+                <tr id="meadow">
+                  <td id="meadow1" style="background-color:rgb(213, 234, 180)"></td>
+                  <td id="meadow2">meadow</td>
+                </tr>
+                <tr id="maizeField">
+                  <td id="maizeField1" style="background-color:rgb(183, 238, 8)"></td>
+                  <td id="maizeField2">maizeField</td>
+                </tr>
+                <tr id="greenField">
+                  <td id="greenField1" style="background-color:rgb(102, 208, 60)"></td>
+                  <td id="greenField2">greenField</td>
+                </tr>
+                <tr id="treeBush">
+                  <td id="treeBush1" style="background-color:rgb(0, 110, 0)"></td>
+                  <td id="treeBush2">treeBush</td>
+                </tr>
+                <tr id="building">
+                  <td id="building1" style="background-color:rgb(208, 208, 208)"></td>
+                  <td id="building2">building</td>
+                </tr>
+                <tr id="pavedArea">
+                  <td id="pavedArea1" style="background-color:rgb(179, 170, 142)"></td>
+                  <td id="pavedArea2">pavedArea</td>
+                </tr>
+                <tr id="road">
+                  <td id="road1" style="background-color:rgb(68, 60, 58)"></td>
+                  <td id="road2">road</td>
+                </tr>
+                <tr id="technique">
+                  <td id="technique1" style="background-color:rgb(255, 100, 255)"></td>
+                  <td id="technique2">technique</td>
+                </tr>
+              </table>
+            </td>
+            <td>
+              <table>
+                <!-- Agri-13 -->
+                <tr>
+                  <td>annotated: </td>
+                  <td id="void_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="branches_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="harvested_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="blankField_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="grainField_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="colzaBloom_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="meadow_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="maizeField_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="greenField_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="treeBush_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="building_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="pavedArea_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="road_num"></td>
+                </tr>
+                <tr>
+                  <td>annotated: </td>
+                  <td id="technique_num"></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <br>
+      <button onclick="overlay_on()">Show Controls</button>
+      <table>
+        <tr>
+          <th colspan="2">Image Statistics</th>
+          <th colspan="2">Dataset Statistics (not live)</th>
+        </tr>
+        <tr>
+          <td class="attribute">Annot. Status</td>
+          <td class="value" id="annot_status"></td>
+          <td class="attribute">Finished Imgs.</td>
+          <td class="value" id="num_finished"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Img. Width</td>
+          <td class="value" id="img_width"></td>
+          <td class="attribute">Unfinished Imgs.</td>
+          <td class="value" id="num_unfinished"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Img. Height</td>
+          <td class="value" id="img_height"></td>
+          <td class="attribute">Empty Imgs.</td>
+          <td class="value" id="num_empty"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Img. Depth</td>
+          <td class="value" id="img_depth"></td>
+          <td class="attribute"># Person</td>
+          <td class="value" id="num_person"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Camera ISO</td>
+          <td class="value" id="cam_iso"></td>
+          <td class="attribute">Smallest Person [px]</td>
+          <td class="value" id="min_person"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Camera Shutter</td>
+          <td class="value" id="cam_shutter"></td>
+          <td class="attribute">Biggest Person [px]</td>
+          <td class="value" id="max_person"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Camera EV</td>
+          <td class="value" id="cam_ev"></td>
+          <td class="attribute">Mean Person Size [px]</td>
+          <td class="value" id="mean_person"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Camera Fnum</td>
+          <td class="value" id="cam_fnum"></td>
+          <td class="attribute"># Technic</td>
+          <td class="value" id="num_technic"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Camera CT</td>
+          <td class="value" id="cam_ct"></td>
+          <td class="attribute">Smallest Technic [px]</td>
+          <td class="value" id="min_technic"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Camera Color md</td>
+          <td class="value" id="cam_color_md"></td>
+          <td class="attribute">Biggest Technic [px]</td>
+          <td class="value" id="max_technic"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Camera focal len</td>
+          <td class="value" id="cam_focal_len"></td>
+          <td class="attribute">Mean Technic Size [px]</td>
+          <td class="value" id="mean_technic"></td>
+        </tr>
+        <tr>
+          <td class="attribute">GPS Longitude</td>
+          <td class="value" id="gps_longitude"></td>
+          <td class="attribute"># Animal</td>
+          <td class="value" id="num_animal"></td>
+        </tr>
+        <tr>
+          <td class="attribute">GPS Latitude</td>
+          <td class="value" id="gps_latitude"></td>
+          <td class="attribute">Smallest Animal [px]</td>
+          <td class="value" id="min_animal"></td>
+        </tr>
+        <tr>
+          <td class="attribute">GPS Altitude</td>
+          <td class="value" id="gps_altitude"></td>
+          <td class="attribute">Biggest Animal [px]</td>
+          <td class="value" id="max_animal"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Barometer</td>
+          <td class="value" id="gps_barometer"></td>
+          <td class="attribute">Mean Animal Size [px]</td>
+          <td class="value" id="mean_animal"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Flight Altitude</td>
+          <td class="value" id="gps_flight_altitude"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Yaw</td>
+          <td class="value" id="drone_yaw"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Pitch</td>
+          <td class="value" id="drone_pitch"></td>
+        </tr>
+        <tr>
+          <td class="attribute">Roll</td>
+          <td class="value" id="drone_roll"></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <footer>
+    <p>Created by: Alexander Leipnitz</p>
+    <p>Last updated: 13.10.2020</p>
+  </footer>
+</body>
+
+</html>

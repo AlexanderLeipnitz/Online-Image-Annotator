@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<annotation>
+  <dataset>EXAMPLE</dataset>
+  <filename>img3
+  .jpg</filename>
+  <size>
+    <height>2160</height>
+    <width>3840</width>
+    <depth>3</depth>
+  </size>
+  <cam>
+    <iso>100</iso>
+    <shutter>500</shutter>
+    <ev>0</ev>
+    <fnum>2.2</fnum>
+  </cam>
+  <gps>
+    <longitude>0.0000</longitude>
+    <latitude>0.0000</latitude>
+    <barometer>0.0</barometer>
+  </gps>
+  <status>empty</status>
+</annotation>
