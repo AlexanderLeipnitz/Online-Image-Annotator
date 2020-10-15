@@ -17,19 +17,11 @@
   - Windows: XAMPP
 - Clone the repository into the document root directory of the webserver 
   `git clone https://github.com/AlexanderLeipnitz/Online-Image-Annotator`
-- Run `maintenance_scripts/dataset_stats.py` periodically if you want display up-to-date dataset statistics
-## Usage
-- `Show Annotation Type` switches between the finished and unfinished folder and displays only the images from them
-- `Finished Annotation?` moves the current unfinished image and its annotation file to the `finished` folder when the next image is selected
-### Object detection:
-- `Image empty?` moves the current image and its annotation file to the `empty` folder when the next image is selected
-### Object segmentation:
-- `Segmentation Images Only` loads images from a optional fourth `segmentation` folder
-- `Save Polygon to png` creates an additional annotation-image with filled polygons in the `annotations` folder
+- Run `python maintenance_scripts/dataset_stats.py` periodically if you want to display up-to-date dataset statistics
 - Folder structure: 
   ```
   -- data/
-     |-- finished/
+     |-- finished/                  (images that are already annotated)
      |   |-- annotations/
      |   |   |-- subfolder1/        (e.g. shooting date)
      |   |       |-- subfolder11/   (e.g. individual video)
@@ -42,28 +34,28 @@
      |       |-- subfolder1/        (e.g. shooting date)
      |           |-- subfolder11/   (e.g. individual video)
      |               -- *.jpg       (list of downsampled images)
-     |-- unfinished/
+     |-- unfinished/                (images that are not annotated yet)
      |   |-- annotations/
      |   |   |-- subfolder2/        (e.g. shooting date)
      |   |       |-- subfolder22/   (e.g. individual video)
      |   |           -- *.xml       (list of annotation files)
      |   |-- imgs/
      |   |   |-- subfolder2/        (e.g. shooting date)
-     |   |        |-- subfolder22/   (e.g. individual video)
-     |   |            -- *.jpg       (list of images)
+     |   |        |-- subfolder22/  (e.g. individual video)
+     |   |            -- *.jpg      (list of images)
      |   |-- imgs_small/
      |       |-- subfolder2/        (e.g. shooting date)
      |           |-- subfolder22/   (e.g. individual video)
      |               -- *.jpg       (list of downsampled images) 
-     |-- empty/
+     |-- empty/                     (images with no objects in them (neg. examples))
      |    |-- annotations/
-     |    |   |-- subfolder3/        (e.g. individual video)
-     |    |       |-- subfolder33/   (e.g. individual video)
-     |    |           -- *.xml       (list of annotation files)
+     |    |   |-- subfolder3/       (e.g. individual video)
+     |    |       |-- subfolder33/  (e.g. individual video)
+     |    |           -- *.xml      (list of annotation files)
      |    |-- imgs/
-     |        |-- subfolder3/        (e.g. individual video)
-     |            |-- subfolder33/   (e.g. individual video)
-     |                -- *.jpg       (list of images)
+     |        |-- subfolder3/       (e.g. individual video)
+     |            |-- subfolder33/  (e.g. individual video)
+     |                -- *.jpg      (list of images)
      |
      |-- segmentation/              (optional segmentation images)
          |-- annotations/
@@ -75,6 +67,21 @@
                  |-- subfolder44/   (e.g. individual video)
                      -- *.jpg       (list of images)
   ```
+
+## Usage
+- `Show Annotation Type` switches between the finished and unfinished folder and displays only the images from them
+- The current client-side annotation-information will only be send to the server and saved when a different image is selected
+- `Finished Annotation?` marks the current unfinished image and its annotation file as `finished` in the XML-Tag: `status`
+- All marked as `finished` annotations within the `unfinished` folder can be moved to the `finished` folder by:
+  - `python maintenance_scripts/move_finished_annotations.py`
+### Object detection:
+- `Image empty?`: When no classes are visible in the image, this switch should be activated
+- `Image empty?` marks the current unfinished image and its annotation file as `empty` in the XML-Tag: `status`
+- All images marked as `empty` in the annotation within the `unfinished` folder can be moved to the `empty` folder by:
+  - `python maintenance_scripts/move_empty_annotations.py`
+### Object segmentation:
+- `Segmentation Images Only` loads images from a optional fourth `segmentation` folder
+- `Save Polygon to png` creates an additional annotation-image with filled polygons in the `annotations` folder
 ## Own Dataset
 - Insert your own images (.jpg) in `data/unfinished/imgs/*/*/` (* ... arbitrary folder names)
 - Insert downscaled images (1/4 horizontal and vertical resolution) in `data/unfinished/imgs_small/*/*/`
