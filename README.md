@@ -18,6 +18,7 @@
 - Clone the repository 
   `git clone https://github.com/AlexanderLeipnitz/Online-Image-Annotator`
 - Modify `DocumentRoot` and `Directory` in the `httpd.conf` file of the Apache Module to the path of the downloaded repository
+- Alternative: Empty the `htdocs` folder of your webserver and clone the repository to this folder directly
 - Run `python maintenance_scripts/dataset_stats.py` periodically if you want to display up-to-date dataset statistics
 - Folder structure: 
   ```
