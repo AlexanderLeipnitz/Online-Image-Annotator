@@ -12,11 +12,12 @@
 - Optimized for high-resolution drone images (4K: 3840x2160 Pixel)
  
 ## Setup
-- Install any webserver (e.g. Apache) and configure it to run PHP. Recommended:
+- Install any webserver (e.g. Apache) and configure it to run PHP 7. Recommended:
   - Linux: LAMP
   - Windows: XAMPP
-- Clone the repository into the document root directory of the webserver 
+- Clone the repository 
   `git clone https://github.com/AlexanderLeipnitz/Online-Image-Annotator`
+- Modify `DocumentRoot` and `Directory` in the `httpd.conf` file of the Apache Module to the path of the downloaded repository
 - Run `python maintenance_scripts/dataset_stats.py` periodically if you want to display up-to-date dataset statistics
 - Folder structure: 
   ```
