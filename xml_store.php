@@ -49,9 +49,13 @@ if (file_exists($xml_file)) {
   $root = $xml->documentElement;
 
   $widthNode = $root->getElementsByTagName("width");
-  foreach ($widthNode as $node) {$img_width = $node->nodeValue;}
+  foreach ($widthNode as $node) {
+    $img_width = $node->nodeValue;
+  }
   $heightNode = $root->getElementsByTagName("height");
-  foreach ($widthNode as $node) {$img_height = $node->nodeValue;}
+  foreach ($widthNode as $node) {
+    $img_height = $node->nodeValue;
+  }
 
   // Remove old box information
   $i = 0;
@@ -62,10 +66,12 @@ if (file_exists($xml_file)) {
   if ($empty == 0) {
     // Add new box information
     for ($i = 0; $i < min(count($bbox_list), $max_boxes); $i++) {
-      if ($bbox_list[$i][0] >= 0 && $bbox_list[$i][0] < $img_width &&
-          $bbox_list[$i][1] >= 0 && $bbox_list[$i][1] < $img_height &&
-          $bbox_list[$i][2] >= 0 && $bbox_list[$i][2] < $img_width &&
-          $bbox_list[$i][3] >= 0 && $bbox_list[$i][3] < $img_height) {
+      if (
+        $bbox_list[$i][0] >= 0 && $bbox_list[$i][0] < $img_width &&
+        $bbox_list[$i][1] >= 0 && $bbox_list[$i][1] < $img_height &&
+        $bbox_list[$i][2] >= 0 && $bbox_list[$i][2] < $img_width &&
+        $bbox_list[$i][3] >= 0 && $bbox_list[$i][3] < $img_height
+      ) {
         // Create a child
         $objectElement = $xml->createElement("object", "");
         $nameElement = $xml->createElement("name", $bbox_list[$i][4]);
@@ -78,8 +84,7 @@ if (file_exists($xml_file)) {
         if ((float) $bbox_list[$i][0] < (float) $bbox_list[$i][2]) {
           $xminElement = $xml->createElement("xmin", $bbox_list[$i][0]);
           $xmaxElement = $xml->createElement("xmax", $bbox_list[$i][2]);
-        }
-        else {
+        } else {
           $xminElement = $xml->createElement("xmin", $bbox_list[$i][2]);
           $xmaxElement = $xml->createElement("xmax", $bbox_list[$i][0]);
         }
@@ -90,8 +95,7 @@ if (file_exists($xml_file)) {
         if ((float) $bbox_list[$i][1] < (float) $bbox_list[$i][3]) {
           $yminElement = $xml->createElement("ymin", $bbox_list[$i][1]);
           $ymaxElement = $xml->createElement("ymax", $bbox_list[$i][3]);
-        }
-        else {
+        } else {
           $yminElement = $xml->createElement("ymin", $bbox_list[$i][3]);
           $ymaxElement = $xml->createElement("ymax", $bbox_list[$i][1]);
         }
@@ -131,10 +135,18 @@ if (file_exists($xml_file)) {
     }
     //Add each coordinate-pair
     for ($j = 0; $j < min(count($polygon_list[$i]->x_coords), $max_points); $j++) {
-      if ($polygon_list[$i]->x_coords[$j] < 0) {$polygon_list[$i]->x_coords[$j] = 0;}
-      if ($polygon_list[$i]->x_coords[$j] >= $img_width) {$polygon_list[$i]->x_coords[$j] = $img_width - 1;}
-      if ($polygon_list[$i]->y_coords[$j] < 0) {$polygon_list[$i]->y_coords[$j] = 0;}
-      if ($polygon_list[$i]->y_coords[$j] >= $img_height) {$polygon_list[$i]->y_coords[$j] = $img_height -1;}
+      if ($polygon_list[$i]->x_coords[$j] < 0) {
+        $polygon_list[$i]->x_coords[$j] = 0;
+      }
+      if ($polygon_list[$i]->x_coords[$j] >= $img_width) {
+        $polygon_list[$i]->x_coords[$j] = $img_width - 1;
+      }
+      if ($polygon_list[$i]->y_coords[$j] < 0) {
+        $polygon_list[$i]->y_coords[$j] = 0;
+      }
+      if ($polygon_list[$i]->y_coords[$j] >= $img_height) {
+        $polygon_list[$i]->y_coords[$j] = $img_height - 1;
+      }
       $xElement = $xml->createElement("x" . $j, $polygon_list[$i]->x_coords[$j]);
       $polygonElement->appendChild($xElement);
       $yElement = $xml->createElement("y" . $j, $polygon_list[$i]->y_coords[$j]);
@@ -171,8 +183,7 @@ if (file_exists($xml_file)) {
   if ($empty == 0) {
     $statusElement = $xml->createElement("status", "finished");
     $root->appendChild($statusElement);
-  }
-  else {
+  } else {
     $statusElement = $xml->createElement("status", "empty");
     $root->appendChild($statusElement);
   }

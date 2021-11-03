@@ -23,8 +23,7 @@ if (isset($_GET["load"]) && isset($_GET["state"])) {
       {
         $path = pathinfo($file);
         //look for valid extensions
-        if (in_array($path["extension"], ["png", "jpg", "gif"])) 
-        {
+        if (in_array($path["extension"], ["png", "jpg", "gif"])) {
           //$filelist[] = ['names'=>$base_path . $date_folder . "/" . $video_folder . "/" . $file];
           $folderlist[$date_folder][$video_folder][] = ['names' => $base_path . $date_folder . "/" . $video_folder . "/" . $file];
         }

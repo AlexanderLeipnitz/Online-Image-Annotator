@@ -13,29 +13,38 @@
  * animate the resizing of a rectangle on the canvas
  *-----------------------------------------------------------------*/
 function animate_rect_resizing(e, bbox_list, current_bbox) {
-  var transparent_canvas = document.getElementById('tmp_canvas');
-  var transparent_ctx = transparent_canvas.getContext('2d');
+  var transparent_canvas = document.getElementById("tmp_canvas");
+  var transparent_ctx = transparent_canvas.getContext("2d");
   var scale = scale_factor / scale_factor_orig;
 
   // mouse left button must be pressed
   if (e.buttons !== 1) return;
 
   transparent_ctx.beginPath(); // begin
-  transparent_ctx.clearRect(0, 0, transparent_canvas.width, transparent_canvas.height);
+  transparent_ctx.clearRect(
+    0,
+    0,
+    transparent_canvas.width,
+    transparent_canvas.height
+  );
 
   transparent_ctx.lineWidth = 5;
-  transparent_ctx.lineCap = 'round';
-  transparent_ctx.strokeStyle = '#c0392b';
+  transparent_ctx.lineCap = "round";
+  transparent_ctx.strokeStyle = "#c0392b";
 
   setPosition(e);
 
   if (bbox_list.length > 0) {
     var xdiff = pos.x - pos_start.x;
     var ydiff = pos.y - pos_start.y;
-    var xmin = (((bbox_list[current_bbox][0] - offset_x) / scale_factor_orig)) * scale;
-    var ymin = (((bbox_list[current_bbox][1] - offset_y) / scale_factor_orig)) * scale;
-    var xmax = (((bbox_list[current_bbox][2] - offset_x) / scale_factor_orig)) * scale;
-    var ymax = (((bbox_list[current_bbox][3] - offset_y) / scale_factor_orig)) * scale;
+    var xmin =
+      ((bbox_list[current_bbox][0] - offset_x) / scale_factor_orig) * scale;
+    var ymin =
+      ((bbox_list[current_bbox][1] - offset_y) / scale_factor_orig) * scale;
+    var xmax =
+      ((bbox_list[current_bbox][2] - offset_x) / scale_factor_orig) * scale;
+    var ymax =
+      ((bbox_list[current_bbox][3] - offset_y) / scale_factor_orig) * scale;
     var xmin_new = xmin;
     var ymin_new = ymin;
     var xmax_new = xmax;
@@ -101,10 +110,10 @@ function animate_rect_resizing(e, bbox_list, current_bbox) {
     //console.log( 'xmin: ' + xmin);
     //console.log( 'xmin_new: ' + xmin_new);
 
-    modified_bbox.xmin = xmin_new / scale * scale_factor_orig + offset_x;
-    modified_bbox.ymin = ymin_new / scale * scale_factor_orig + offset_y;
-    modified_bbox.xmax = xmax_new / scale * scale_factor_orig + offset_x;
-    modified_bbox.ymax = ymax_new / scale * scale_factor_orig + offset_y;
+    modified_bbox.xmin = (xmin_new / scale) * scale_factor_orig + offset_x;
+    modified_bbox.ymin = (ymin_new / scale) * scale_factor_orig + offset_y;
+    modified_bbox.xmax = (xmax_new / scale) * scale_factor_orig + offset_x;
+    modified_bbox.ymax = (ymax_new / scale) * scale_factor_orig + offset_y;
   }
 }
 
@@ -114,11 +123,16 @@ function animate_rect_resizing(e, bbox_list, current_bbox) {
  * edit the finished resized bbox
  *-----------------------------------------------------------------*/
 function finalize_resized_rect(e, bbox_list, current_bbox) {
-  var transparent_canvas = document.getElementById('tmp_canvas');
-  var transparent_ctx = transparent_canvas.getContext('2d');
+  var transparent_canvas = document.getElementById("tmp_canvas");
+  var transparent_ctx = transparent_canvas.getContext("2d");
   //transparent_canvas.style.cursor = 'default';
   transparent_ctx.beginPath(); // begin
-  transparent_ctx.clearRect(0, 0, transparent_canvas.width, transparent_canvas.height);
+  transparent_ctx.clearRect(
+    0,
+    0,
+    transparent_canvas.width,
+    transparent_canvas.height
+  );
   transparent_ctx.stroke(); // draw it!
   transparent_ctx.closePath();
 
@@ -134,5 +148,4 @@ function finalize_resized_rect(e, bbox_list, current_bbox) {
   pos_start.y = -1;
   pos.x = -1;
   pos.y = -1;
-
 }
